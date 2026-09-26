@@ -1,6 +1,6 @@
 # Comparative Study of Speech-to-Text Models for Noisy Real-World Audio
 
-**Author:** [Your Name]
+**Author:** Rushikesh Matlane
 **Date:** September 2026
 **Project:** ASR Model Benchmarking Toolkit
 
