@@ -56,29 +56,51 @@ def download_and_prepare(num_samples: int = None) -> List[AudioSample]:
             "    pip install datasets\n"
         ) from e
 
-    print(f"[dataset_loader] Loading '{config.DATASET_NAME}' "
-          f"({config.DATASET_CONFIG}/{config.DATASET_SPLIT}) — "
-          f"streaming first {num_samples} samples...")
+    dataset_names = [config.DATASET_NAME] + [
+        alias for alias in getattr(config, 'DATASET_ALIASES', [])
+        if alias != config.DATASET_NAME
+    ]
 
-    try:
-        # Streaming mode avoids downloading the entire split.
-        ds = load_dataset(
-            config.DATASET_NAME,
-            config.DATASET_CONFIG,
-            split=config.DATASET_SPLIT,
-            streaming=True,
-            trust_remote_code=True,
-        )
-    except Exception:
-        print("[dataset_loader] Streaming load failed, retrying with a "
-              "non-streaming small split slice...")
-        traceback.print_exc()
-        ds = load_dataset(
-            config.DATASET_NAME,
-            config.DATASET_CONFIG,
-            split=f"{config.DATASET_SPLIT}[:{num_samples}]",
-            trust_remote_code=True,
-        )
+    last_error = None
+    ds = None
+
+    for dataset_name in dataset_names:
+        print(f"[dataset_loader] Loading '{dataset_name}' "
+              f"({config.DATASET_CONFIG}/{config.DATASET_SPLIT}) — "
+              f"streaming first {num_samples} samples...")
+        try:
+            # Streaming mode avoids downloading the entire split.
+            ds = load_dataset(
+                dataset_name,
+                config.DATASET_CONFIG,
+                split=config.DATASET_SPLIT,
+                streaming=True,
+            )
+            break
+        except Exception as exc:
+            last_error = exc
+            print(f"[dataset_loader] Streaming load failed for '{dataset_name}', "
+                  "trying next alias...")
+            traceback.print_exc()
+
+    if ds is None:
+        for dataset_name in dataset_names:
+            print(f"[dataset_loader] Retrying non-streaming '{dataset_name}' "
+                  f"with first {num_samples} examples...")
+            try:
+                ds = load_dataset(
+                    dataset_name,
+                    config.DATASET_CONFIG,
+                    split=f"{config.DATASET_SPLIT}[:{num_samples}]",
+                )
+                break
+            except Exception as exc:
+                last_error = exc
+                print(f"[dataset_loader] Non-streaming load failed for '{dataset_name}'.")
+                traceback.print_exc()
+
+    if ds is None:
+        raise RuntimeError(f"Unable to load LibriSpeech dataset. Last error: {last_error}")
 
     samples: List[AudioSample] = []
 

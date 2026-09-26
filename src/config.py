@@ -20,7 +20,16 @@ NUM_SAMPLES = 50
 # subset. "clean" is the easier, low-noise subset; "other" is the harder,
 # noisier subset. We default to "clean" for reproducibility, and note in the
 # report that this under-represents real customer-support noise conditions.
-DATASET_NAME = "librispeech_asr"
+#
+# The current Hugging Face dataset API expects repo IDs with a namespace. We
+# keep the canonical OpenSLR repo as the default and allow a fallback list for
+# older compatible aliases.
+DATASET_NAME = "openslr/librispeech_asr"
+DATASET_ALIASES = [
+    "openslr/librispeech_asr",
+    "librispeech_asr",
+    "patrickvonplaten/librispeech_asr",
+]
 DATASET_CONFIG = "clean"
 DATASET_SPLIT = "validation"  # small split, good for quick benchmarking
 
