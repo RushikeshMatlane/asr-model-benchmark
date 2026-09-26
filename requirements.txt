@@ -1,0 +1,30 @@
+# Core deep learning framework
+# For GPU (NVIDIA/CUDA), install torch separately first using the command
+# from https://pytorch.org/get-started/locally/ that matches your CUDA
+# version, THEN run `pip install -r requirements.txt` so pip does not
+# overwrite it with a CPU-only build.
+torch>=2.1.0
+
+# HuggingFace ecosystem
+transformers>=4.35.0
+datasets>=2.14.0
+
+# ASR model implementations
+openai-whisper>=20231117
+faster-whisper>=1.0.0
+
+# Evaluation
+jiwer>=3.0.0
+
+# Audio I/O and processing
+soundfile>=0.12.1
+librosa>=0.10.1
+
+# System / memory monitoring
+psutil>=5.9.0
+
+# Data handling and visualization
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.2

@@ -1,0 +1,18 @@
+# Downloaded audio and model weights (large, reproducible via scripts)
+data/audio/*.wav
+models/**
+!models/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
